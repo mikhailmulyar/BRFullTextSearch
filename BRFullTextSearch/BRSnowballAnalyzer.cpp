@@ -23,7 +23,7 @@ CL_NS_DEF2(analysis,snowball)
 
 class BRSnowballAnalyzer::SavedStreams : public TokenStream {
 public:
-	StandardTokenizer* tokenStream;
+	WhitespaceTokenizer* tokenStream;
 	TokenStream* filteredTokenStream;
 	
 	SavedStreams():tokenStream(NULL), filteredTokenStream(NULL)
@@ -68,16 +68,16 @@ TokenStream* BRSnowballAnalyzer::tokenStream(const TCHAR* fieldName, CL_NS(util)
 	return this->tokenStream(fieldName,reader,false);
 }
 
-/** Constructs a {@link StandardTokenizer} filtered by a {@link
+/** Constructs a {@link WhitespaceTokenizer} filtered by a {@link
  StandardFilter}, a {@link LowerCaseFilter} and a {@link StopFilter}. */
 TokenStream* BRSnowballAnalyzer::tokenStream(const TCHAR* fieldName, CL_NS(util)::Reader* reader, bool deleteReader) {
 	BufferedReader* bufferedReader = reader->__asBufferedReader();
 	TokenStream* result;
 	
 	if ( bufferedReader == NULL )
-		result =  _CLNEW StandardTokenizer( _CLNEW FilteredBufferedReader(reader, deleteReader), true );
+		result =  _CLNEW WhitespaceTokenizer( _CLNEW FilteredBufferedReader(reader, deleteReader));
 	else
-		result = _CLNEW StandardTokenizer(bufferedReader, deleteReader);
+		result = _CLNEW WhitespaceTokenizer(bufferedReader);
 	
 	result = _CLNEW StandardFilter(result, true);
     result = _CLNEW CL_NS(analysis)::LowerCaseFilter(result, true);
@@ -102,9 +102,9 @@ TokenStream* BRSnowballAnalyzer::reusableTokenStream(const TCHAR* fieldName, Rea
 		
 		BufferedReader* bufferedReader = reader->__asBufferedReader();
 		if ( bufferedReader == NULL )
-			streams->tokenStream = _CLNEW StandardTokenizer( _CLNEW FilteredBufferedReader(reader, false), true);
+			streams->tokenStream = _CLNEW WhitespaceTokenizer( _CLNEW FilteredBufferedReader(reader, false));
 		else
-			streams->tokenStream = _CLNEW StandardTokenizer(bufferedReader);
+			streams->tokenStream = _CLNEW WhitespaceTokenizer(bufferedReader);
 		
 		streams->filteredTokenStream = _CLNEW StandardFilter(streams->tokenStream, true);
 		streams->filteredTokenStream = _CLNEW LowerCaseFilter(streams->filteredTokenStream, true);
