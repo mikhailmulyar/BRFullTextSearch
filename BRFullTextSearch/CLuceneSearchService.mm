@@ -89,6 +89,29 @@ using namespace lucene::store;
 	return self;
 }
 
+- (id)initWithIndex:(NSDictionary *)dictionary {
+    if ( (self = [super init]) ) {
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            IndexWriteQueue = dispatch_queue_create(kWriteQueueName, DISPATCH_QUEUE_SERIAL);
+            //log4Info(@"Search index queue %s created", kWriteQueueName);
+        });
+        
+        generalTextFields = @[kBRSearchFieldNameTitle, kBRSearchFieldNameValue];
+        indexUpdateOptimizeThreshold = kDefaultIndexUpdateOptimizeThreshold;
+        bundle = [NSBundle mainBundle];
+        defaultAnalyzerLanguage = [[NSLocale preferredLanguages] firstObject];
+        
+        // create Directory instance, using NoLockFactory because we have a serial queue for all update operations
+        dir = new RAMDirectory();
+        
+        if (dictionary)
+            [self saveDataToIndex:dictionary];
+        //log4Debug(@"%@ search index %@", (create ? @"Created" : @"Opened"), path);
+    }
+    return self;
+}
+
 - (void)dealloc {
 	[self resetSearcher];
 	if ( dir != NULL ) {
@@ -130,27 +153,26 @@ using namespace lucene::store;
 }
 
 + (BOOL)indexExistsAtPath:(NSString *)path {
-	// we're merely testing for the existance of any file within the path directory
-	return ([[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:NULL] == YES
-			&& [[[NSFileManager defaultManager] enumeratorAtPath:path] nextObject] != nil);
+    // we're merely testing for the existance of any file within the path directory
+    return ([[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:NULL] && [[[NSFileManager defaultManager] enumeratorAtPath:path] nextObject] != nil);
 }
 
 #pragma mark - Accessors
 
 - (std::tr1::shared_ptr<Searcher>)searcher {
-	if ( searcher.get() == NULL ) {
-		// create the index directory, if it doesn't already exist
-		BOOL create = ([CLuceneSearchService indexExistsAtPath:indexPath] == NO);
-		if ( create ) {
-			// create modifier now, which will create the index if it doesn't exist
-			dispatch_sync(IndexWriteQueue, ^{
-				IndexModifier modifier(dir, [self defaultAnalyzer], (bool)create);
-				modifier.close();
-			});
-		}
-		searcher.reset(new IndexSearcher(dir));
-	}
-	return searcher;
+    if ( searcher.get() == NULL ) {
+        // create the index directory, if it doesn't already exist
+        BOOL create = indexPath ? ![CLuceneSearchService indexExistsAtPath:indexPath] : !(static_cast<RAMDirectory*> (dir))-> fileExists("segments.gen");
+        if ( create ) {
+            // create modifier now, which will create the index if it doesn't exist
+            dispatch_sync(IndexWriteQueue, ^{
+                IndexModifier modifier(dir, [self defaultAnalyzer], (bool)create);
+                modifier.close();
+            });
+        }
+        searcher.reset(new IndexSearcher(dir));
+    }
+    return searcher;
 }
 
 - (std::auto_ptr<Analyzer>)analyzerForLanguage:(NSString *)lang {
@@ -238,63 +260,68 @@ using namespace lucene::store;
 }
 
 - (NSString *)userDefaultsIndexUpdateCountKey {
-	char *dirHash = NULL;
-	if ( indexPath != nil ) {
-		dirHash = lucene::util::MD5String((char *)[indexPath cStringUsingEncoding:NSUTF8StringEncoding]);
-	}
-	NSString *result = [NSString stringWithFormat:@"CLuceneIndexUpdateCount-%s", dirHash];
-	if ( dirHash != NULL ) {
-		free(dirHash);
-	}
-	return result;
+    char *dirHash = NULL;
+    if ( indexPath != nil ) {
+        dirHash = lucene::util::MD5String((char *)[indexPath cStringUsingEncoding:NSUTF8StringEncoding]);
+    }
+    else {
+        dirHash = lucene::util::MD5String((char *)[@"lucene.idx" cStringUsingEncoding:NSUTF8StringEncoding]);
+    }
+    NSString *result = [NSString stringWithFormat:@"CLuceneIndexUpdateCount-%s", dirHash];
+    if ( dirHash != NULL ) {
+        free(dirHash);
+    }
+    return result;
 }
 
 #pragma mark - Bulk API
 
 - (void)bulkUpdateIndex:(BRSearchServiceIndexUpdateBlock)updateBlock queue:(dispatch_queue_t)finishedQueue finished:(BRSearchServiceUpdateCallbackBlock)finishedBlock {
-	queue_retain(finishedQueue);
-	dispatch_async(IndexWriteQueue, ^{
-		@autoreleasepool {
-			NSError *error = nil;
-			int finishedUpdateCount = 0;
-			try {
-				NSString *defaultsUpdateKey = [self userDefaultsIndexUpdateCountKey];
-				BOOL create = ([CLuceneSearchService indexExistsAtPath:indexPath] == NO);
-				std::auto_ptr<IndexModifier> modifier(new IndexModifier(dir, [self defaultAnalyzer], (bool)create));
-				CLuceneIndexUpdateContext *ctx = [[CLuceneIndexUpdateContext alloc] initWithIndexModifier:modifier.get()];
-				@try {
-					updateBlock(ctx);
-					[self flushBufferedDocuments:ctx];
-					finishedUpdateCount = ctx.updateCount;
-				} @finally {
-					// keep track of index updates, to optimize index
-					NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-					const NSInteger updateCount = [ud integerForKey:defaultsUpdateKey] + 1;
-					if ( updateCount > indexUpdateOptimizeThreshold || ctx.optimizeWhenDone ) {
-						modifier->optimize();
-						[ud setInteger:0 forKey:defaultsUpdateKey];
-					} else {
-						[ud setInteger:updateCount forKey:defaultsUpdateKey];
-					}
-					modifier->close();
-					dispatch_async(dispatch_get_main_queue(), ^{
-						[self resetSearcher];
-					});
-				}
-			} catch ( CLuceneError &ex ) {
-				finishedUpdateCount = -1;
-				error = [NSError errorWithDomain:BRSearchServiceErrorDomain code:ex.number() userInfo:@{NSLocalizedDescriptionKey : [NSString stringWithCLuceneString:ex.twhat()]}];
-				NSLog(@"Error %d adding object to index: %@", ex.number(), [NSString stringWithCLuceneString:ex.twhat()]);
-			}
-			if ( finishedBlock != NULL ) {
-				dispatch_queue_t callbackQueue = (finishedQueue != NULL ? finishedQueue : dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
-				dispatch_async(callbackQueue, ^{
-					finishedBlock(finishedUpdateCount, error);
-				});
-			}
-		}
-		queue_release(finishedQueue);
-	});
+    queue_retain(finishedQueue);
+    dispatch_async(IndexWriteQueue, ^{
+        @autoreleasepool {
+            NSError *error = nil;
+            int finishedUpdateCount = 0;
+            try {
+                NSString *defaultsUpdateKey = [self userDefaultsIndexUpdateCountKey];
+                
+                BOOL create = indexPath ? ![CLuceneSearchService indexExistsAtPath:indexPath] : !(static_cast<RAMDirectory*> (dir))-> fileExists("segments.gen");
+                
+                std::auto_ptr<IndexModifier> modifier(new IndexModifier(dir, [self defaultAnalyzer], (bool)create));
+                CLuceneIndexUpdateContext *ctx = [[CLuceneIndexUpdateContext alloc] initWithIndexModifier:modifier.get()];
+                @try {
+                    updateBlock(ctx);
+                    [self flushBufferedDocuments:ctx];
+                    finishedUpdateCount = ctx.updateCount;
+                } @finally {
+                    // keep track of index updates, to optimize index
+                    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+                    const NSInteger updateCount = [ud integerForKey:defaultsUpdateKey] + 1;
+                    if ( updateCount > indexUpdateOptimizeThreshold || ctx.optimizeWhenDone ) {
+                        modifier->optimize();
+                        [ud setInteger:0 forKey:defaultsUpdateKey];
+                    } else {
+                        [ud setInteger:updateCount forKey:defaultsUpdateKey];
+                    }
+                    modifier->close();
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [self resetSearcher];
+                    });
+                }
+            } catch ( CLuceneError &ex ) {
+                finishedUpdateCount = -1;
+                error = [NSError errorWithDomain:BRSearchServiceErrorDomain code:ex.number() userInfo:@{NSLocalizedDescriptionKey : [NSString stringWithCLuceneString:ex.twhat()]}];
+                NSLog(@"Error %d adding object to index: %@", ex.number(), [NSString stringWithCLuceneString:ex.twhat()]);
+            }
+            if ( finishedBlock != NULL ) {
+                dispatch_queue_t callbackQueue = (finishedQueue != NULL ? finishedQueue : dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
+                dispatch_async(callbackQueue, ^{
+                    finishedBlock(finishedUpdateCount, error);
+                });
+            }
+        }
+        queue_release(finishedQueue);
+    });
 }
 
 - (BOOL)bulkUpdateIndexAndWait:(BRSearchServiceIndexUpdateBlock)updateBlock error:(NSError *__autoreleasing *)error {
@@ -947,6 +974,92 @@ using namespace lucene::store;
 	} catch ( const CLuceneError &err ) {
 		@throw [self exceptionForLuceneError:err userInfo:@{@"query" : predicate}];
 	}
+}
+
+
+- (NSDictionary *) getDataFromIndex
+{
+    vector<string> names;
+    dir->list(&names);
+    uint8_t buf[CL_NS(store)::BufferedIndexOutput::BUFFER_SIZE];
+    
+    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+    
+    for (size_t i=0;i<names.size();++i ){
+        
+        NSOutputStream *os = [NSOutputStream outputStreamToMemory];
+        
+        // read current file
+        IndexInput* is = dir->openInput(names[i].c_str());
+        // and copy to ram disk
+        //todo: this could be a problem when copying from big indexes...
+        int64_t len = is->length();
+        int64_t readCount = 0;
+        
+        [os open];
+        
+        while (readCount < len) {
+            
+            int32_t toRead = (int32_t)(readCount + CL_NS(store)::BufferedIndexOutput::BUFFER_SIZE > len ? len - readCount : CL_NS(store)::BufferedIndexOutput::BUFFER_SIZE);
+            
+            is->readBytes(buf, toRead);
+            
+            [os write:buf maxLength:(NSUInteger) toRead];
+            
+            readCount += toRead;
+        }
+        
+        NSString *fileName = [NSString stringWithCString:names[i].c_str() encoding:NSUTF8StringEncoding];
+        
+        NSData *fileData = [os propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
+        
+        dictionary[fileName] = fileData;
+        
+        // graceful cleanup
+        is->close();
+        _CLDELETE(is);
+        
+        [os close];
+    }
+    
+    return dictionary;
+}
+
+- (void) saveDataToIndex:(NSDictionary *)data
+{
+    uint8_t buf[CL_NS(store)::BufferedIndexOutput::BUFFER_SIZE];
+    
+    for (NSString *fileName in data.allKeys)
+    {
+        NSData *fileData = data[fileName];
+        
+        IndexOutput *os = dir->createOutput([fileName cStringUsingEncoding:NSUTF8StringEncoding]);
+        
+        NSInputStream *is = [NSInputStream inputStreamWithData:fileData];
+        [is open];
+        
+        int64_t len       = fileData.length;
+        int64_t readCount = 0;
+        while (readCount < len)
+        {
+            
+            int32_t toRead = (int32_t) (readCount + CL_NS(store)::BufferedIndexOutput::BUFFER_SIZE > len
+                                        ? len - readCount
+                                        : CL_NS(store)::BufferedIndexOutput::BUFFER_SIZE);
+            
+            [is read:buf maxLength:(NSUInteger) toRead];
+            
+            os->writeBytes(buf, toRead);
+            
+            readCount += toRead;
+        }
+        
+        // graceful cleanup
+        os->close();
+        _CLDELETE(os);
+        
+        [is close];
+    }
 }
 
 @end

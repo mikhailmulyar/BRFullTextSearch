@@ -86,6 +86,8 @@
  */
 - (instancetype)initWithIndexPath:(NSString *)indexPath;
 
+- (instancetype)initWithIndex:(NSDictionary *)dictionary;
+
 /**
  Get the configured index path, which is a directory that contains the Lucene index files.
  */
@@ -106,5 +108,10 @@
  * A `NSUserDefaults` key used to track the number of index updates between optimizations.
  */
 - (NSString *)userDefaultsIndexUpdateCountKey;
+
+
+- (NSDictionary *) getDataFromIndex;
+
+- (void) saveDataToIndex:(NSDictionary *)data;
 
 @end
