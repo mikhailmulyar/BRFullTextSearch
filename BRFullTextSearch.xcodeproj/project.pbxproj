@@ -22,8 +22,6 @@
 
 /* Begin PBXBuildFile section */
 		C909C2651784CB600016C25E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C909C2641784CB600016C25E /* Foundation.framework */; };
-		C909C2911784CC320016C25E /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C909C2901784CC320016C25E /* libz.dylib */; };
-		C909C2931784CC380016C25E /* libstdc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C909C2921784CC380016C25E /* libstdc++.dylib */; };
 		C909C4901784CF0A0016C25E /* gunichartables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C909C29F1784CF090016C25E /* gunichartables.cpp */; };
 		C909C4921784CF0A0016C25E /* repl_lltot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C909C2A01784CF090016C25E /* repl_lltot.cpp */; };
 		C909C4941784CF0A0016C25E /* repl_tcscasecmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C909C2A21784CF090016C25E /* repl_tcscasecmp.cpp */; };
@@ -217,8 +215,6 @@
 		C90B75241C7EA04300014124 /* CLuceneSearchServiceTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = C97940ED1786015200DF0660 /* CLuceneSearchServiceTests.mm */; };
 		C90B75251C7EA04700014124 /* NSDate_BRFullTextSearchAdditionsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C9AE054417E149E4006527D0 /* NSDate_BRFullTextSearchAdditionsTests.m */; };
 		C90B75261C7EA04B00014124 /* TestIndexable.m in Sources */ = {isa = PBXBuildFile; fileRef = C99FCBE918466AA700A90E66 /* TestIndexable.m */; };
-		C90B75291C7EA32800014124 /* libstdc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C909C2921784CC380016C25E /* libstdc++.dylib */; };
-		C90B752A1C7EA32B00014124 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C909C2901784CC320016C25E /* libz.dylib */; };
 		C90B752D1C7EA44900014124 /* BRSimpleSortDescriptorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C90B752C1C7EA44900014124 /* BRSimpleSortDescriptorTests.m */; };
 		C933D8271CD68B2D006206B9 /* stop-words.txt in Resources */ = {isa = PBXBuildFile; fileRef = E3DF7F421C69AC43005B861B /* stop-words.txt */; };
 		C9575E811A97EDAF00394CDA /* NSData+CLuceneAdditions.mm in Sources */ = {isa = PBXBuildFile; fileRef = C9575E801A97EDAF00394CDA /* NSData+CLuceneAdditions.mm */; };
@@ -246,8 +242,6 @@
 		E38E8CCA1C6A5194000EB763 /* SnowballPrefixFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = C9D6EC201AD615FC006D23F4 /* SnowballPrefixFilter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E38E8CCB1C6A519B000EB763 /* BRSearchResult.h in Headers */ = {isa = PBXBuildFile; fileRef = C909C6521784D4B70016C25E /* BRSearchResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E3DF7E4E1C69A145005B861B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3DF7E4D1C69A145005B861B /* Foundation.framework */; };
-		E3DF7E511C69A1BE005B861B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = E3DF7E4F1C69A149005B861B /* libz.tbd */; };
-		E3DF7E531C69A1C9005B861B /* libstdc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = E3DF7E521C69A1C9005B861B /* libstdc++.tbd */; };
 		E3DF7E541C69A253005B861B /* NSDate+BRFullTextSearchAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = C909C6771784DB700016C25E /* NSDate+BRFullTextSearchAdditions.m */; };
 		E3DF7E551C69A256005B861B /* NSDateComponents+BRFullTextSearchAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = C909C67F1784DCD50016C25E /* NSDateComponents+BRFullTextSearchAdditions.m */; };
 		E3DF7E561C69A259005B861B /* NSTimeZone+BRFullTextSearchAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = C909C67B1784DBD30016C25E /* NSTimeZone+BRFullTextSearchAdditions.m */; };
@@ -459,6 +453,8 @@
 		E3DF7F751C69AD31005B861B /* BRSearchFields.h in Headers */ = {isa = PBXBuildFile; fileRef = C909C6721784D64D0016C25E /* BRSearchFields.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E3DF7F771C69AD32005B861B /* BRSearchResults.h in Headers */ = {isa = PBXBuildFile; fileRef = C909C6541784D4B70016C25E /* BRSearchResults.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E3DF7F781C69AD32005B861B /* BRSearchService.h in Headers */ = {isa = PBXBuildFile; fileRef = C909C6551784D4B70016C25E /* BRSearchService.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		EF2011371D271CEB006BE423 /* libz.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = EF2011361D271CEB006BE423 /* libz.1.dylib */; };
+		EF2011391D271D07006BE423 /* libstdc++.6.0.9.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = EF2011381D271D07006BE423 /* libstdc++.6.0.9.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -487,8 +483,6 @@
 		C909C2611784CB600016C25E /* libBRFullTextSearch.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libBRFullTextSearch.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C909C2641784CB600016C25E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		C909C2681784CB600016C25E /* BRFullTextSearch-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BRFullTextSearch-Prefix.pch"; sourceTree = "<group>"; };
-		C909C2901784CC320016C25E /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
-		C909C2921784CC380016C25E /* libstdc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.dylib"; path = "usr/lib/libstdc++.dylib"; sourceTree = SDKROOT; };
 		C909C2991784CF090016C25E /* _SharedHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _SharedHeader.h; sourceTree = "<group>"; };
 		C909C29D1784CF090016C25E /* _gunichartables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _gunichartables.h; sourceTree = "<group>"; };
 		C909C29E1784CF090016C25E /* _threads.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _threads.h; sourceTree = "<group>"; };
@@ -932,8 +926,6 @@
 		E3DF7E451C69A075005B861B /* BRFullTextSearch.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BRFullTextSearch.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3DF7E491C69A075005B861B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E3DF7E4D1C69A145005B861B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		E3DF7E4F1C69A149005B861B /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
-		E3DF7E521C69A1C9005B861B /* libstdc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libstdc++.tbd"; path = "Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/usr/lib/libstdc++.tbd"; sourceTree = DEVELOPER_DIR; };
 		E3DF7F3D1C69AC43005B861B /* da */ = {isa = PBXFileReference; lastKnownFileType = text; name = da; path = "stop-words.txt"; sourceTree = "<group>"; };
 		E3DF7F401C69AC43005B861B /* de */ = {isa = PBXFileReference; lastKnownFileType = text; name = de; path = "stop-words.txt"; sourceTree = "<group>"; };
 		E3DF7F431C69AC43005B861B /* en */ = {isa = PBXFileReference; lastKnownFileType = text; name = en; path = "stop-words.txt"; sourceTree = "<group>"; };
@@ -948,6 +940,8 @@
 		E3DF7F5E1C69AC43005B861B /* ru */ = {isa = PBXFileReference; lastKnownFileType = text; name = ru; path = "stop-words.txt"; sourceTree = "<group>"; };
 		E3DF7F611C69AC43005B861B /* sv */ = {isa = PBXFileReference; lastKnownFileType = text; name = sv; path = "stop-words.txt"; sourceTree = "<group>"; };
 		E3DF7F641C69AC43005B861B /* tr */ = {isa = PBXFileReference; lastKnownFileType = text; name = tr; path = "stop-words.txt"; sourceTree = "<group>"; };
+		EF2011361D271CEB006BE423 /* libz.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.dylib; path = ../../../../usr/lib/libz.1.dylib; sourceTree = "<group>"; };
+		EF2011381D271D07006BE423 /* libstdc++.6.0.9.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.6.0.9.dylib"; path = "../../../../usr/lib/libstdc++.6.0.9.dylib"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -955,9 +949,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C909C2931784CC380016C25E /* libstdc++.dylib in Frameworks */,
+				EF2011391D271D07006BE423 /* libstdc++.6.0.9.dylib in Frameworks */,
+				EF2011371D271CEB006BE423 /* libz.1.dylib in Frameworks */,
 				C99FCBF01846746E00A90E66 /* UIKit.framework in Frameworks */,
-				C909C2911784CC320016C25E /* libz.dylib in Frameworks */,
 				C909C2651784CB600016C25E /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -966,9 +960,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C90B75291C7EA32800014124 /* libstdc++.dylib in Frameworks */,
 				C90B751D1C7EA00D00014124 /* libBRFullTextSearch.a in Frameworks */,
-				C90B752A1C7EA32B00014124 /* libz.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -976,8 +968,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E3DF7E531C69A1C9005B861B /* libstdc++.tbd in Frameworks */,
-				E3DF7E511C69A1BE005B861B /* libz.tbd in Frameworks */,
 				E3DF7E4E1C69A145005B861B /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1011,12 +1001,10 @@
 		C909C2631784CB600016C25E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				E3DF7E521C69A1C9005B861B /* libstdc++.tbd */,
-				E3DF7E4F1C69A149005B861B /* libz.tbd */,
+				EF2011381D271D07006BE423 /* libstdc++.6.0.9.dylib */,
+				EF2011361D271CEB006BE423 /* libz.1.dylib */,
 				E3DF7E4D1C69A145005B861B /* Foundation.framework */,
 				C99FCBEE1846745E00A90E66 /* UIKit.framework */,
-				C909C2921784CC380016C25E /* libstdc++.dylib */,
-				C909C2901784CC320016C25E /* libz.dylib */,
 				C909C2641784CB600016C25E /* Foundation.framework */,
 				C99FCBEB18466FE600A90E66 /* XCTest.framework */,
 			);
