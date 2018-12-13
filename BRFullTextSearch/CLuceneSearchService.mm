@@ -48,8 +48,8 @@ using namespace lucene::store;
 	NSInteger indexUpdateOptimizeThreshold;
 	Directory *dir;
 	std::auto_ptr<Analyzer> defaultAnalyzer;
-	std::tr1::shared_ptr<Searcher> searcher;
-	NSBundle *bundle;
+    std::shared_ptr<Searcher> searcher;
+    NSBundle *bundle;
 	NSString *defaultAnalyzerLanguage;
 }
 
@@ -162,8 +162,8 @@ using namespace lucene::store;
 
 #pragma mark - Accessors
 
-- (std::tr1::shared_ptr<Searcher>)searcher {
-	std::tr1::shared_ptr<Searcher> s = searcher;
+- (std::shared_ptr<Searcher>)searcher {
+    std::shared_ptr<Searcher> s = searcher;
 	if ( s.get() == NULL ) {
 		@synchronized(self) {
 			// create the index directory, if it doesn't already exist
@@ -704,8 +704,8 @@ using namespace lucene::store;
 			Query *q = parser.parse([query asCLuceneString], [fieldName asCLuceneString], [self defaultAnalyzer]);
 			rootQuery.get()->add(q, true, BooleanClause::SHOULD);
 		}
-		std::tr1::shared_ptr<Searcher> s = [self searcher];
-		std::auto_ptr<Hits> hits(s->search(rootQuery.get()));
+        std::shared_ptr<Searcher> s = [self searcher];
+        std::auto_ptr<Hits> hits(s->search(rootQuery.get()));
 		std::auto_ptr<Sort> sort;
 		std::auto_ptr<Query> resultQuery(rootQuery);
 		return [[CLuceneSearchResults alloc] initWithHits:hits sort:sort query:resultQuery searcher:s];
@@ -718,8 +718,8 @@ using namespace lucene::store;
 	NSString *idValue = [self idValueForType:type identifier:identifier];
 	try {
 		Term *idTerm = new Term([kBRSearchFieldNameIdentifier asCLuceneString], [idValue asCLuceneString]);
-		std::tr1::shared_ptr<Searcher> s = [self searcher];
-		std::auto_ptr<TermQuery> idQuery(new TermQuery(idTerm));
+        std::shared_ptr<Searcher> s = [self searcher];
+        std::auto_ptr<TermQuery> idQuery(new TermQuery(idTerm));
 		std::auto_ptr<Hits> hits(s->search(idQuery.get()));
 		CLuceneSearchResult *result = nil;
 		if ( hits->length() > 0 ) {
@@ -734,8 +734,8 @@ using namespace lucene::store;
 }
 
 - (id<BRSearchResults>)searchWithQuery:(std::auto_ptr<Query>)query sortDescriptors:(nullable NSArray<id<BRSortDescriptor>> *)sortDescriptors {
-	std::tr1::shared_ptr<Searcher> s = [self searcher];
-	if ( sortDescriptors != nil ) {
+    std::shared_ptr<Searcher> s = [self searcher];
+    if ( sortDescriptors != nil ) {
 		std::vector<SortField *> sortFields;
 		for ( id<BRSortDescriptor> desc in sortDescriptors ) {
 			SortField *sortField = new SortField([desc.sortFieldName asCLuceneString], (desc.sortType == BRSearchSortTypeInteger
